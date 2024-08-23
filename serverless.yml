@@ -1,0 +1,67 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: jose
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: ZONA00
+
+provider:
+  name: aws
+  runtime: python3.12
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:GetParameters
+      Resource: arn:aws:ssm:us-east-1:<account-id>:parameter/myapp/*
+    - Effect: Allow
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DeleteNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DescribeNetworkInterfaceAttributes
+        - ec2:AttachNetworkInterface
+        - ec2:DetachNetworkInterface
+      Resource: "*"
+  vpc:
+    securityGroupIds:
+      - sg-0f9d8b0e0f0e8b0e
+    subnetIds:
+      - subnet-0f9d8b0e0f0e8b0e
+      - subnet-0f9d8b0e0f0e8b0e
+
+functions:
+  RDSTestconnection:
+    handler: handlerRDSTestconnection.RDSTestconnection
+    events:
+      - httpApi:
+          path: /RDSconnection/RDSTestconnection
+          method: get
+
+  RDScreate:
+    handler: handlerRDSCreate.RDScreate
+    events:
+      - httpApi:
+          path: /RDSconnection/RDScreate
+          method: post
+
+  RDSupdate:
+    handler: handlerRDSupdate.RDSupdate
+    events:
+      - httpApi:
+          path: /RDSconnection/RDSupdate/{id}
+          method: put
+
+  RDSdelete:
+    handler: handlerRDSdelete.RDSdelete
+    events:
+      - httpApi:
+          path: /RDSconnection/RDSdelete/{id}
+          method: delete
+
+  RDSselect:
+    handler: handlerRDSselect.RDSselect
+    events:
+      - httpApi:
+          path: /RDSconnection/RDSselect/{id}
+          method: get
